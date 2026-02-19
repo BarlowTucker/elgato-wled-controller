@@ -232,13 +232,19 @@
           const controller = currentControllers.find((c) => c.id === cid);
           const label = controller ? escHtml(controller.name) : escHtml(cid);
           const savedPresetId = currentSettings.controllerPresets[cid];
-          return buildPresetDropdown(cid, label, cid, presetsByController[cid], savedPresetId, null);
+          const raw = presetsByController[cid];
+          const presets = raw && raw.error ? [] : raw;
+          const error = raw && raw.error ? raw.error : null;
+          return buildPresetDropdown(cid, label, cid, presets, savedPresetId, error);
         }).join('');
       } else {
         // Simple mode: one dropdown for the first selected controller
         const firstCid = checkedIds[0];
         const savedPresetId = currentSettings.presetId;
-        container.innerHTML = buildPresetDropdown('simple', null, firstCid, presetsByController[firstCid], savedPresetId, null);
+        const raw = presetsByController[firstCid];
+        const presets = raw && raw.error ? [] : raw;
+        const error = raw && raw.error ? raw.error : null;
+        container.innerHTML = buildPresetDropdown('simple', null, firstCid, presets, savedPresetId, error);
       }
 
       // Attach change listeners
