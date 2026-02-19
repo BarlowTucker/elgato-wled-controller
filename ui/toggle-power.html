@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <title>Toggle Power Settings</title>
+  <meta charset="utf-8" />
+  <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+  <style>
+    .controller-row {
+      display: flex;
+      align-items: flex-start;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .controller-row:last-child {
+      border-bottom: none;
+    }
+    .controller-row input[type="checkbox"] {
+      margin-top: 2px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .controller-label {
+      flex: 1;
+      overflow: hidden;
+    }
+    .controller-name {
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .controller-ip {
+      font-size: 0.85em;
+      opacity: 0.7;
+    }
+    .empty-message {
+      font-size: 0.85em;
+      opacity: 0.7;
+      font-style: italic;
+    }
+    .empty-hint {
+      font-size: 0.8em;
+      opacity: 0.6;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <sdpi-item label="Target Controllers">
+    <div id="controller-list">
+      <div class="empty-message">Loading controllers...</div>
+    </div>
+  </sdpi-item>
+
+  <script>
+    // Current state
+    let currentControllers = [];
+    let currentSettings = { controllerIds: [] };
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /**
+     * Render the checkbox list for all controllers.
+     * Pre-checks boxes matching currentSettings.controllerIds.
+     */
+    function renderControllerList() {
+      const container = document.getElementById('controller-list');
+
+      if (!currentControllers.length) {
+        container.innerHTML =
+          '<div class="empty-message">No controllers registered.</div>' +
+          '<div class="empty-hint">Add controllers via the global WLED settings panel.</div>';
+        return;
+      }
+
+      const checkedIds = new Set(currentSettings.controllerIds || []);
+
+      container.innerHTML = currentControllers.map((c) => {
+        const checked = checkedIds.has(c.id) ? 'checked' : '';
+        return `
+          <div class="controller-row">
+            <input type="checkbox" id="cb-${escHtml(c.id)}" data-controller-id="${escHtml(c.id)}" ${checked}>
+            <label for="cb-${escHtml(c.id)}" class="controller-label">
+              <div class="controller-name">${escHtml(c.name)}</div>
+              <div class="controller-ip">${escHtml(c.ip)}</div>
+            </label>
+          </div>
+        `;
+      }).join('');
+
+      // Auto-save on any checkbox change
+      container.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+        cb.addEventListener('change', saveSettings);
+      });
+    }
+
+    /**
+     * Collect checked controller IDs and send tp:saveSettings to plugin.
+     */
+    function saveSettings() {
+      const checkedIds = Array.from(
+        document.querySelectorAll('#controller-list input[type="checkbox"]:checked')
+      ).map((cb) => cb.getAttribute('data-controller-id'));
+
+      currentSettings = { controllerIds: checkedIds };
+
+      if (window.$SD) {
+        window.$SD.send('sendToPlugin', { type: 'tp:saveSettings', controllerIds: checkedIds });
+      }
+    }
+
+    // Request controller list from plugin
+    function requestControllers() {
+      if (window.$SD) {
+        window.$SD.send('sendToPlugin', { type: 'tp:getControllers' });
+      }
+    }
+
+    // On DOMContentLoaded: try requesting immediately (may not have $SD yet)
+    document.addEventListener('DOMContentLoaded', () => {
+      requestControllers();
+    });
+
+    // On websocketCreate: $SD is now available — request controllers and listen for messages
+    document.addEventListener('websocketCreate', () => {
+      // Request controllers now that bridge is ready
+      window.$SD.send('sendToPlugin', { type: 'tp:getControllers' });
+
+      window.$SD.on('sendToPropertyInspector', (event) => {
+        const msg = event.payload;
+        if (!msg || !msg.type) return;
+
+        if (msg.type === 'init') {
+          // Initial load: store controllers and settings, then render
+          currentControllers = msg.controllers || [];
+          currentSettings = msg.settings || { controllerIds: [] };
+          renderControllerList();
+        } else if (msg.type === 'controllerList') {
+          // Updated controller list — re-render preserving current checked state
+          currentControllers = msg.controllers || [];
+          renderControllerList();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
