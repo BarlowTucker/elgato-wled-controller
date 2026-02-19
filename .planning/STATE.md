@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-19)
 ## Current Position
 
 Phase: 2 of 4 (Actions)
-Plan: 1 of N in current phase
-Status: In progress — Plan 02-01 complete (TogglePowerAction, WLEDClient extensions, toggle-power PI)
-Last activity: 2026-02-19 — Plan 02-01 complete (TogglePowerAction, toggle-power PI, WLEDClient.togglePower/getPresets)
+Plan: 2 of N in current phase
+Status: In progress — Plan 02-02 complete (ActivatePresetAction, activate-preset PI with preset name dropdowns)
+Last activity: 2026-02-19 — Plan 02-02 complete (ActivatePresetAction simple/advanced mode, preset name dropdowns from WLED)
 
-Progress: [████░░░░░░] 33% (4 of 12 total plans)
+Progress: [█████░░░░░] 42% (5 of 12 total plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 2 min
-- Total execution time: 10 min
+- Total plans completed: 5
+- Average duration: 2.2 min
+- Total execution time: 15 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 3 | 7 min | 2.3 min |
-| 02-actions | 1 | 3 min | 3 min |
+| 02-actions | 2 | 8 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (4 min), 02-01 (3 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (4 min), 02-01 (3 min), 02-02 (5 min)
 - Trend: Fast
 
 *Updated after each plan completion*
@@ -61,6 +61,10 @@ Recent decisions affecting current work:
 - [Phase 02-01]: TogglePowerSettings extends Record<string, any> for JsonObject compatibility — avoids index signature pollution on domain types
 - [Phase 02-01]: onPropertyInspectorDidAppear uses ev.action.getSettings() — PropertyInspectorDidAppearEvent has no payload property (ActionWithoutPayloadEvent)
 - [Phase 02-01]: Per-action namespaced messages (tp:*) + global plugin.ts guard regex to avoid collision
+- [Phase 02-02]: ActivatePresetSettings extends Record<string, any> for JsonObject compatibility — same pattern as TogglePowerSettings
+- [Phase 02-02]: PI stores presetsByController as local map; re-renders dropdowns on presetList without re-fetching on mode switch
+- [Phase 02-02]: Advanced mode skips controllers with no preset mapped — allows partial configuration without alerting
+- [Phase 02-02]: Simple mode sources preset dropdown from first selected controller only — predictable UX for common case
 
 ### Pending Todos
 
@@ -68,12 +72,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 2]: Verify WLED /json/presets response schema against real device before implementing preset name dropdown (MEDIUM confidence)
+- [Phase 2]: Verify WLED /presets.json response schema against real device before shipping — preset name dropdown implemented using best-effort schema from research (MEDIUM confidence)
 - [Phase 3]: Verify SDK encoder API — exact event names, setFeedback() payload, built-in layout IDs — against @elgato/streamdeck@2.0.1 docs before implementation (MEDIUM confidence)
 - [Phase 4]: Pull Elgato Marketplace icon size specs from docs.elgato.com/sdk/plugins/publishing at start of phase (do not rely on training data)
 
 ## Session Continuity
 
-Last session: 2026-02-19T20:00:00Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-02-19T21:01:00Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: .planning/phases/02-actions/ (next plan in Phase 2)
