@@ -3,6 +3,7 @@ import { ControllerRegistry } from './registry/ControllerRegistry';
 import { MDNSScanner } from './discovery/MDNSScanner';
 import { WLEDClient } from './client/WLEDClient';
 import { TogglePowerAction } from './actions/TogglePowerAction';
+import { ActivatePresetAction } from './actions/ActivatePresetAction';
 
 const registry = ControllerRegistry.getInstance();
 
@@ -46,6 +47,7 @@ async function main() {
 
   // Register actions before connecting
   streamDeck.actions.registerAction(new TogglePowerAction());
+  streamDeck.actions.registerAction(new ActivatePresetAction());
 
   // Handle messages from the Property Inspector (global settings panel)
   streamDeck.ui.onSendToPlugin(async (ev) => {

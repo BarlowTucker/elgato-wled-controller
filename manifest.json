@@ -35,6 +35,14 @@
       "PropertyInspectorPath": "ui/toggle-power.html",
       "Controllers": ["Keypad"],
       "States": [{ "Image": "imgs/actions/toggle-power/key" }]
+    },
+    {
+      "Name": "Activate Preset",
+      "UUID": "com.barloworld.wled.activate-preset",
+      "Icon": "imgs/actions/activate-preset/icon",
+      "PropertyInspectorPath": "ui/activate-preset.html",
+      "Controllers": ["Keypad"],
+      "States": [{ "Image": "imgs/actions/activate-preset/key" }]
     }
   ]
 }
