@@ -1,9 +1,11 @@
 {
+  "UUID": "com.barlowtucker.wled",
   "Name": "WLED Control",
   "Version": "1.0.0",
-  "Author": "barlowtucker",
+  "Author": "Barlow Tucker",
   "Description": "Control WLED LED controllers from Stream Deck",
   "Category": "WLED",
+  "CategoryIcon": "imgs/plugin/icon",
   "Icon": "imgs/plugin/icon",
   "CodePath": "dist/plugin.js",
   "Nodes": { "Min": "20.0.0" },

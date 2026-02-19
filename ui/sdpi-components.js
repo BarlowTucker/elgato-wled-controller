@@ -4,7 +4,7 @@
  * @license MIT
  * @copyright Copyright (c) Corsair Memory Inc.
  */
-export { DeviceType } from '@elgato/schemas/streamdeck/plugins';
+// DeviceType import removed — not needed in PI and bare specifiers don't resolve in browsers
 
 // Polyfill, explicit resource management https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-2.html#using-declarations-and-explicit-resource-management
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1626,4 +1626,5 @@ const streamDeck = {
     },
 };
 
-export { Enumerable, EventEmitter, LogLevel, streamDeck as default };
+// Expose streamDeck as a global for PI scripts (not an ES module export)
+window.streamDeck = streamDeck;

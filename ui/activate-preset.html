@@ -68,10 +68,10 @@
   </div>
   <div class="hint">Enter a numeric preset ID (1–250). Activating also powers on.</div>
 
-  <script type="module">
-    import streamDeck from "./sdpi-components.js";
-
-    // Current state
+  <script src="sdpi-components.js"></script>
+  <script>
+  (function() {
+    // streamDeck is available as a global from sdpi-components.js
     let controllers = [];
     let settings = { selectedControllers: [], presetId: null };
 
@@ -135,38 +135,43 @@
       await streamDeck.settings.setSettings(settings);
     }
 
-    // --- Controller management (global settings via plugin messages) ---
+    // --- Controller management (global settings — PI reads/writes directly) ---
 
-    function addController() {
-      const ip = document.getElementById("ctrl-ip").value.trim();
-      const name = document.getElementById("ctrl-name").value.trim();
+    async function addController() {
+      var ip = document.getElementById("ctrl-ip").value.trim();
+      var name = document.getElementById("ctrl-name").value.trim();
       if (!ip || !name) return;
-      streamDeck.plugin.sendToPlugin({ event: "addController", ip, name });
+      var globals = await streamDeck.settings.getGlobalSettings();
+      var list = globals.controllers || [];
+      if (!list.some(function(c) { return c.ip === ip; })) {
+        list = list.concat([{ ip: ip, name: name }]);
+        await streamDeck.settings.setGlobalSettings({ controllers: list });
+      }
       document.getElementById("ctrl-ip").value = "";
       document.getElementById("ctrl-name").value = "";
     }
 
-    function removeController(ip) {
-      streamDeck.plugin.sendToPlugin({ event: "removeController", ip });
+    async function removeController(ip) {
+      var globals = await streamDeck.settings.getGlobalSettings();
+      var list = (globals.controllers || []).filter(function(c) { return c.ip !== ip; });
+      await streamDeck.settings.setGlobalSettings({ controllers: list });
     }
 
-    // --- Listen for updates from plugin ---
+    // --- Listen for global settings changes (fires when setGlobalSettings is called) ---
 
-    streamDeck.plugin.onSendToPropertyInspector((ev) => {
-      if (ev.payload && ev.payload.event === "controllersUpdated") {
-        controllers = ev.payload.controllers || [];
-        renderControllerList();
-        renderCheckboxes();
-      }
+    streamDeck.settings.onDidReceiveGlobalSettings(function(ev) {
+      controllers = (ev.settings && ev.settings.controllers) || [];
+      renderControllerList();
+      renderCheckboxes();
     });
 
     // --- Wire up UI events ---
 
     document.getElementById("btn-add").addEventListener("click", addController);
-    document.getElementById("ctrl-ip").addEventListener("keydown", e => {
+    document.getElementById("ctrl-ip").addEventListener("keydown", function(e) {
       if (e.key === "Enter") document.getElementById("ctrl-name").focus();
     });
-    document.getElementById("ctrl-name").addEventListener("keydown", e => {
+    document.getElementById("ctrl-name").addEventListener("keydown", function(e) {
       if (e.key === "Enter") addController();
     });
 
@@ -175,7 +180,13 @@
 
     // --- Load initial settings from Stream Deck ---
 
-    streamDeck.settings.getSettings().then((s) => {
+    streamDeck.settings.getGlobalSettings().then(function(g) {
+      controllers = (g && g.controllers) || [];
+      renderControllerList();
+      renderCheckboxes();
+    }).catch(function() {});
+
+    streamDeck.settings.getSettings().then(function(s) {
       if (s) {
         settings = {
           selectedControllers: s.selectedControllers || [],
@@ -185,7 +196,8 @@
           document.getElementById("preset-id").value = settings.presetId;
         }
       }
-    }).catch(() => {});
+    }).catch(function() {});
+  })();
   </script>
 </body>
 </html>
