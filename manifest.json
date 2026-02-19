@@ -1,0 +1,30 @@
+{
+  "UUID": "com.barloworld.wled",
+  "Name": "WLED",
+  "Author": "barloworld",
+  "Version": "0.1.0.0",
+  "Description": "Control WLED LED strips from Stream Deck",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.6"
+  },
+  "OS": [
+    {
+      "Platform": "mac",
+      "MinimumVersion": "10.15"
+    },
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Nodejs": {
+    "Version": "20",
+    "Debug": "enabled"
+  },
+  "CodePath": "bin/plugin.js",
+  "Icon": "imgs/plugin-icon",
+  "Category": "WLED",
+  "CategoryIcon": "imgs/category-icon",
+  "Actions": []
+}
