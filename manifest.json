@@ -26,5 +26,6 @@
   "Icon": "imgs/plugin-icon",
   "Category": "WLED",
   "CategoryIcon": "imgs/category-icon",
+  "PropertyInspectorPath": "ui/global-settings.html",
   "Actions": []
 }
