@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** One button press controls multiple WLED lights instantly — no app switching, no phone, just tactile control.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — Actions (Phase 1 complete)
 
 ## Current Position
 
-Phase: 1 of 4 (Foundation)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-19 — Plan 01-02 complete (WLEDClient HTTP wrapper + vitest)
+Phase: 2 of 4 (Actions)
+Plan: 0 of N in current phase
+Status: Phase 1 complete, ready to start Phase 2
+Last activity: 2026-02-19 — Plan 01-03 complete (ControllerRegistry, MDNSScanner, global settings PI)
 
-Progress: [██░░░░░░░░] 17% (2 of 12 total plans)
+Progress: [███░░░░░░░] 25% (3 of 12 total plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 1.5 min
-- Total execution time: 3 min
+- Total plans completed: 3
+- Average duration: 2 min
+- Total execution time: 7 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 2 | 3 min | 1.5 min |
+| 01-foundation | 3 | 7 min | 2.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (1 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (4 min)
 - Trend: Fast
 
 *Updated after each plan completion*
@@ -53,6 +53,9 @@ Recent decisions affecting current work:
 - [Phase 01-02]: Use AbortSignal.timeout(ms) directly (not AbortController) — cleaner syntax, no manual cleanup needed
 - [Phase 01-02]: DOMException.name is read-only — set via constructor second arg new DOMException(msg, 'AbortError'), not Object.assign
 - [Phase 01-02]: vitest v4 selected for test runner — ESM-native, no babel/jest config overhead
+- [Phase 01-03]: as-any cast on setGlobalSettings/getGlobalSettings and sendToPropertyInspector — @elgato/utils JsonObject constraint requires index signatures that would pollute domain models
+- [Phase 01-03]: Background polling not implemented in PI — polls on open via getControllers; avoids resource overhead when panel is closed
+- [Phase 01-03]: ControllerRegistry.add() saves immediately without reachability check per locked plan decision; name fetch is best-effort only
 
 ### Pending Todos
 
@@ -66,6 +69,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-19T19:48:54Z
-Stopped at: Completed 01-02-PLAN.md
-Resume file: .planning/phases/01-foundation/01-03-PLAN.md
+Last session: 2026-02-19T19:55:05Z
+Stopped at: Completed 01-03-PLAN.md
+Resume file: .planning/phases/02-actions/ (first plan in Phase 2)
