@@ -46,12 +46,11 @@ Plans:
   3. User can configure different presets per controller in a single button press (advanced mode)
   4. Each action's Property Inspector lets the user choose which controllers it targets (multi-select)
   5. When a targeted controller is unreachable, the button shows an error state on the key without crashing
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Toggle On/Off action with Property Inspector and controller multi-select
-- [ ] 02-02: Set Preset action with preset name fetching and Property Inspector
-- [ ] 02-03: Set Preset Advanced action with per-controller preset mapping UI
+- [ ] 02-01-PLAN.md — WLEDClient extensions (togglePower, getPresets), TogglePowerAction with PI and controller multi-select
+- [ ] 02-02-PLAN.md — ActivatePresetAction with simple/advanced mode, preset name dropdowns, and per-controller mapping
 
 ### Phase 3: Dial Actions
 **Goal**: Users can adjust brightness and effect speed by turning dials, with the current value shown on the dial display in real time
@@ -89,7 +88,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
-| 2. Button Actions | 0/3 | Not started | - |
+| 1. Foundation | 3/3 | Complete | 2026-02-19 |
+| 2. Button Actions | 0/2 | Planning | - |
 | 3. Dial Actions | 0/2 | Not started | - |
 | 4. Publish Ready | 0/1 | Not started | - |
