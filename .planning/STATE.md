@@ -10,27 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-19)
 ## Current Position
 
 Phase: 2 of 4 (Actions)
-Plan: 0 of N in current phase
-Status: Phase 1 complete, ready to start Phase 2
-Last activity: 2026-02-19 — Plan 01-03 complete (ControllerRegistry, MDNSScanner, global settings PI)
+Plan: 1 of N in current phase
+Status: In progress — Plan 02-01 complete (TogglePowerAction, WLEDClient extensions, toggle-power PI)
+Last activity: 2026-02-19 — Plan 02-01 complete (TogglePowerAction, toggle-power PI, WLEDClient.togglePower/getPresets)
 
-Progress: [███░░░░░░░] 25% (3 of 12 total plans)
+Progress: [████░░░░░░] 33% (4 of 12 total plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: 2 min
-- Total execution time: 7 min
+- Total execution time: 10 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 3 | 7 min | 2.3 min |
+| 02-actions | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (4 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (4 min), 02-01 (3 min)
 - Trend: Fast
 
 *Updated after each plan completion*
@@ -56,6 +57,10 @@ Recent decisions affecting current work:
 - [Phase 01-03]: as-any cast on setGlobalSettings/getGlobalSettings and sendToPropertyInspector — @elgato/utils JsonObject constraint requires index signatures that would pollute domain models
 - [Phase 01-03]: Background polling not implemented in PI — polls on open via getControllers; avoids resource overhead when panel is closed
 - [Phase 01-03]: ControllerRegistry.add() saves immediately without reachability check per locked plan decision; name fetch is best-effort only
+- [Phase 02-01]: experimentalDecorators set to false — SDK @action uses TC39 stage-3 ClassDecoratorContext, incompatible with legacy TS experimental decorator mode
+- [Phase 02-01]: TogglePowerSettings extends Record<string, any> for JsonObject compatibility — avoids index signature pollution on domain types
+- [Phase 02-01]: onPropertyInspectorDidAppear uses ev.action.getSettings() — PropertyInspectorDidAppearEvent has no payload property (ActionWithoutPayloadEvent)
+- [Phase 02-01]: Per-action namespaced messages (tp:*) + global plugin.ts guard regex to avoid collision
 
 ### Pending Todos
 
@@ -69,6 +74,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-19T19:55:05Z
-Stopped at: Completed 01-03-PLAN.md
-Resume file: .planning/phases/02-actions/ (first plan in Phase 2)
+Last session: 2026-02-19T20:00:00Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: .planning/phases/02-actions/ (next plan in Phase 2)
