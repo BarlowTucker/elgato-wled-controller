@@ -62,10 +62,9 @@ describe('WLEDClient', () => {
     });
 
     it('throws on timeout (AbortSignal.timeout behavior)', async () => {
+      // DOMException('msg', 'AbortError') sets name='AbortError' via constructor
       fetchMock.mockRejectedValueOnce(
-        Object.assign(new DOMException('The operation was aborted', 'AbortError'), {
-          name: 'AbortError',
-        })
+        new DOMException('The operation was aborted', 'AbortError')
       );
 
       const client = new WLEDClient('http://192.168.1.50:80');
