@@ -48,3 +48,8 @@ export interface WLEDState {
   mainseg: number;
   seg?: WLEDSegment[];
 }
+
+export interface WLEDPreset {
+  id: number;    // preset id (numeric key from /presets.json, > 0)
+  name: string;  // preset display name
+}
