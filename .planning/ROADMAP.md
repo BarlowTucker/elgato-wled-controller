@@ -29,12 +29,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can remove a controller from the global registry
   4. A WLED HTTP request to an offline controller times out cleanly (no plugin freeze) and reports failure
   5. mDNS discovery finds WLED controllers on the local network and adds them to the registry
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: SDK scaffold, manifest, and project structure
-- [ ] 01-02: WLEDClient (HTTP wrapper with AbortController timeouts and Promise.allSettled fan-out)
-- [ ] 01-03: ControllerRegistry (global settings persistence, CRUD, mDNS discovery)
+- [ ] 01-01-PLAN.md — SDK scaffold, manifest, TypeScript/Rollup config, and project structure
+- [ ] 01-02-PLAN.md — WLEDClient HTTP wrapper with AbortSignal timeouts (TDD)
+- [ ] 01-03-PLAN.md — ControllerRegistry, mDNS scanner, and global settings Property Inspector
 
 ### Phase 2: Button Actions
 **Goal**: Users can control their WLED lights with button presses — toggle power, activate presets, and target specific controllers per action
