@@ -72,30 +72,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CTRL-01 | — | Pending |
-| CTRL-02 | — | Pending |
-| CTRL-03 | — | Pending |
-| CTRL-04 | — | Pending |
-| CTRL-05 | — | Pending |
-| CTRL-06 | — | Pending |
-| BTN-01 | — | Pending |
-| BTN-02 | — | Pending |
-| BTN-03 | — | Pending |
-| BTN-04 | — | Pending |
-| DIAL-01 | — | Pending |
-| DIAL-02 | — | Pending |
-| DIAL-03 | — | Pending |
-| DIAL-04 | — | Pending |
-| UI-01 | — | Pending |
-| UI-02 | — | Pending |
-| UI-03 | — | Pending |
-| UI-04 | — | Pending |
+| CTRL-01 | Phase 1 | Pending |
+| CTRL-02 | Phase 1 | Pending |
+| CTRL-03 | Phase 1 | Pending |
+| CTRL-06 | Phase 1 | Pending |
+| UI-03 | Phase 1 | Pending |
+| UI-04 | Phase 1 | Pending |
+| BTN-01 | Phase 2 | Pending |
+| BTN-02 | Phase 2 | Pending |
+| BTN-03 | Phase 2 | Pending |
+| BTN-04 | Phase 2 | Pending |
+| CTRL-04 | Phase 2 | Pending |
+| CTRL-05 | Phase 2 | Pending |
+| UI-01 | Phase 2 | Pending |
+| DIAL-01 | Phase 3 | Pending |
+| DIAL-02 | Phase 3 | Pending |
+| DIAL-03 | Phase 3 | Pending |
+| DIAL-04 | Phase 3 | Pending |
+| UI-02 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-19*
-*Last updated: 2026-02-19 after initial definition*
+*Last updated: 2026-02-19 after roadmap creation*
