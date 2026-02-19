@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>WLED Activate Preset</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; color: #e8e8e8; background: transparent; padding: 8px; }
+    .section-label { font-size: 11px; font-weight: 600; color: #969696; text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 6px 0; }
+    .section-label:first-child { margin-top: 0; }
+    .row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .row label { flex: 0 0 70px; font-size: 11px; color: #969696; }
+    input[type="text"], input[type="number"], select {
+      flex: 1; background: #2d2d2d; border: 1px solid #3d3d3d; border-radius: 3px;
+      color: #e8e8e8; padding: 4px 6px; font-size: 12px; outline: none;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: #0077ff; }
+    button {
+      background: #0077ff; color: #fff; border: none; border-radius: 3px;
+      padding: 4px 10px; font-size: 12px; cursor: pointer; white-space: nowrap;
+    }
+    button:hover { background: #0066dd; }
+    button.danger { background: #c0392b; }
+    button.danger:hover { background: #a93226; }
+    .controller-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+    .controller-item {
+      display: flex; align-items: center; gap: 6px;
+      background: #2d2d2d; border-radius: 3px; padding: 4px 8px;
+    }
+    .controller-name { flex: 1; font-size: 12px; }
+    .controller-ip { font-size: 10px; color: #969696; }
+    .checkbox-list { display: flex; flex-direction: column; gap: 4px; }
+    .checkbox-item { display: flex; align-items: center; gap: 6px; }
+    .checkbox-item label { font-size: 12px; cursor: pointer; }
+    .no-controllers { font-size: 11px; color: #666; font-style: italic; }
+    .hint { font-size: 10px; color: #666; margin-top: 2px; }
+    hr { border: none; border-top: 1px solid #333; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Controller Management -->
+  <div class="section-label">Controllers</div>
+  <div class="row">
+    <input type="text" id="ctrl-ip" placeholder="IP address" />
+    <input type="text" id="ctrl-name" placeholder="Name" style="flex: 0.7" />
+    <button id="btn-add">Add</button>
+  </div>
+  <div class="controller-list" id="controller-list">
+    <div class="no-controllers">No controllers added yet.</div>
+  </div>
+
+  <hr />
+
+  <!-- Target Selection -->
+  <div class="section-label">Target Controllers</div>
+  <div class="checkbox-list" id="checkbox-list">
+    <div class="no-controllers">Add controllers above to select targets.</div>
+  </div>
+
+  <hr />
+
+  <!-- Preset ID -->
+  <div class="section-label">Preset</div>
+  <div class="row">
+    <label>Preset ID</label>
+    <input type="number" id="preset-id" min="1" max="250" placeholder="1–250" />
+  </div>
+  <div class="hint">Enter a numeric preset ID (1–250). Activating also powers on.</div>
+
+  <script type="module">
+    import streamDeck from "./sdpi-components.js";
+
+    // Current state
+    let controllers = [];
+    let settings = { selectedControllers: [], presetId: null };
+
+    // --- Render helpers ---
+
+    function renderControllerList() {
+      const list = document.getElementById("controller-list");
+      if (controllers.length === 0) {
+        list.innerHTML = '<div class="no-controllers">No controllers added yet.</div>';
+        return;
+      }
+      list.innerHTML = controllers.map(c => `
+        <div class="controller-item">
+          <span class="controller-name">${escHtml(c.name)}</span>
+          <span class="controller-ip">${escHtml(c.ip)}</span>
+          <button class="danger" data-ip="${escHtml(c.ip)}">Remove</button>
+        </div>
+      `).join("");
+
+      list.querySelectorAll("button[data-ip]").forEach(btn => {
+        btn.addEventListener("click", () => removeController(btn.dataset.ip));
+      });
+    }
+
+    function renderCheckboxes() {
+      const list = document.getElementById("checkbox-list");
+      if (controllers.length === 0) {
+        list.innerHTML = '<div class="no-controllers">Add controllers above to select targets.</div>';
+        return;
+      }
+      list.innerHTML = controllers.map(c => `
+        <div class="checkbox-item">
+          <input type="checkbox" id="chk-${escHtml(c.ip)}" value="${escHtml(c.ip)}"
+            ${settings.selectedControllers.includes(c.ip) ? "checked" : ""} />
+          <label for="chk-${escHtml(c.ip)}">${escHtml(c.name)} (${escHtml(c.ip)})</label>
+        </div>
+      `).join("");
+
+      list.querySelectorAll("input[type=checkbox]").forEach(chk => {
+        chk.addEventListener("change", saveSettings);
+      });
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    // --- Save per-action settings ---
+
+    async function saveSettings() {
+      const selectedControllers = Array.from(
+        document.querySelectorAll("#checkbox-list input[type=checkbox]:checked")
+      ).map(chk => chk.value);
+      const rawPreset = document.getElementById("preset-id").value;
+      const presetId = rawPreset === "" ? null : parseInt(rawPreset, 10);
+      settings = { selectedControllers, presetId };
+      await streamDeck.settings.setSettings(settings);
+    }
+
+    // --- Controller management (global settings via plugin messages) ---
+
+    function addController() {
+      const ip = document.getElementById("ctrl-ip").value.trim();
+      const name = document.getElementById("ctrl-name").value.trim();
+      if (!ip || !name) return;
+      streamDeck.plugin.sendToPlugin({ event: "addController", ip, name });
+      document.getElementById("ctrl-ip").value = "";
+      document.getElementById("ctrl-name").value = "";
+    }
+
+    function removeController(ip) {
+      streamDeck.plugin.sendToPlugin({ event: "removeController", ip });
+    }
+
+    // --- Listen for updates from plugin ---
+
+    streamDeck.plugin.onSendToPropertyInspector((ev) => {
+      if (ev.payload && ev.payload.event === "controllersUpdated") {
+        controllers = ev.payload.controllers || [];
+        renderControllerList();
+        renderCheckboxes();
+      }
+    });
+
+    // --- Wire up UI events ---
+
+    document.getElementById("btn-add").addEventListener("click", addController);
+    document.getElementById("ctrl-ip").addEventListener("keydown", e => {
+      if (e.key === "Enter") document.getElementById("ctrl-name").focus();
+    });
+    document.getElementById("ctrl-name").addEventListener("keydown", e => {
+      if (e.key === "Enter") addController();
+    });
+
+    document.getElementById("preset-id").addEventListener("change", saveSettings);
+    document.getElementById("preset-id").addEventListener("input", saveSettings);
+
+    // --- Load initial settings from Stream Deck ---
+
+    streamDeck.settings.getSettings().then((s) => {
+      if (s) {
+        settings = {
+          selectedControllers: s.selectedControllers || [],
+          presetId: s.presetId || null
+        };
+        if (settings.presetId) {
+          document.getElementById("preset-id").value = settings.presetId;
+        }
+      }
+    }).catch(() => {});
+  </script>
+</body>
+</html>
