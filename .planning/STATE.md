@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-19)
 ## Current Position
 
 Phase: 1 of 4 (Foundation)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-19 — Plan 01-01 complete (SDK scaffold + build pipeline)
+Last activity: 2026-02-19 — Plan 01-02 complete (WLEDClient HTTP wrapper + vitest)
 
-Progress: [█░░░░░░░░░] 8% (1 of 12 total plans)
+Progress: [██░░░░░░░░] 17% (2 of 12 total plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 2 min
-- Total execution time: 2 min
+- Total plans completed: 2
+- Average duration: 1.5 min
+- Total execution time: 3 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 1 | 2 min | 2 min |
+| 01-foundation | 2 | 3 min | 1.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min)
-- Trend: —
+- Last 5 plans: 01-01 (2 min), 01-02 (1 min)
+- Trend: Fast
 
 *Updated after each plan completion*
 
@@ -50,6 +50,9 @@ Recent decisions affecting current work:
 - [Phase 01-01]: Used @elgato/cli@1.7.1 (version 2.0.0 does not exist on npm — latest is 1.7.1)
 - [Phase 01-01]: Node.js built-ins fully externalized in rollup.config.mjs to support multicast-dns dgram dependency
 - [Phase 01-01]: PropertyInspectorPath omitted from manifest.json in 01-01 — to be added in plan 01-03 when global settings HTML is created
+- [Phase 01-02]: Use AbortSignal.timeout(ms) directly (not AbortController) — cleaner syntax, no manual cleanup needed
+- [Phase 01-02]: DOMException.name is read-only — set via constructor second arg new DOMException(msg, 'AbortError'), not Object.assign
+- [Phase 01-02]: vitest v4 selected for test runner — ESM-native, no babel/jest config overhead
 
 ### Pending Todos
 
@@ -63,6 +66,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-19T19:45:00Z
-Stopped at: Completed 01-01-PLAN.md
-Resume file: .planning/phases/01-foundation/01-02-PLAN.md
+Last session: 2026-02-19T19:48:54Z
+Stopped at: Completed 01-02-PLAN.md
+Resume file: .planning/phases/01-foundation/01-03-PLAN.md
