@@ -1,0 +1,36 @@
+{
+  "Name": "WLED Control",
+  "Version": "1.0.0",
+  "Author": "barlowtucker",
+  "Description": "Control WLED LED controllers from Stream Deck",
+  "Category": "WLED",
+  "Icon": "imgs/plugin/icon",
+  "CodePath": "dist/plugin.js",
+  "Nodes": { "Min": "20.0.0" },
+  "SDKVersion": 2,
+  "OS": [
+    { "Platform": "mac", "MinimumVersion": "10.15" },
+    { "Platform": "windows", "MinimumVersion": "10" }
+  ],
+  "Software": { "MinimumVersion": "6.5" },
+  "Actions": [
+    {
+      "Name": "Toggle",
+      "UUID": "com.barlowtucker.wled.toggle",
+      "Icon": "imgs/actions/toggle/icon",
+      "PropertyInspectorPath": "ui/toggle.html",
+      "Tooltip": "Turn WLED controllers on or off",
+      "Controllers": ["Keypad"],
+      "States": [{ "Image": "imgs/actions/toggle/key" }]
+    },
+    {
+      "Name": "Activate Preset",
+      "UUID": "com.barlowtucker.wled.activate-preset",
+      "Icon": "imgs/actions/activate-preset/icon",
+      "PropertyInspectorPath": "ui/activate-preset.html",
+      "Tooltip": "Activate a WLED preset on controllers",
+      "Controllers": ["Keypad"],
+      "States": [{ "Image": "imgs/actions/activate-preset/key" }]
+    }
+  ]
+}
