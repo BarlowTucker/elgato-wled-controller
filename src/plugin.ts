@@ -2,6 +2,7 @@ import streamDeck from '@elgato/streamdeck';
 import { ControllerRegistry } from './registry/ControllerRegistry';
 import { MDNSScanner } from './discovery/MDNSScanner';
 import { WLEDClient } from './client/WLEDClient';
+import { TogglePowerAction } from './actions/TogglePowerAction';
 
 const registry = ControllerRegistry.getInstance();
 
@@ -43,9 +44,18 @@ async function main() {
     await registry.load();
   });
 
+  // Register actions before connecting
+  streamDeck.actions.registerAction(new TogglePowerAction());
+
   // Handle messages from the Property Inspector (global settings panel)
   streamDeck.ui.onSendToPlugin(async (ev) => {
     const payload = ev.payload as { type: string; [key: string]: unknown };
+
+    // Skip namespaced messages (e.g. 'tp:*', 'ap:*') — these are handled by
+    // the individual SingletonAction subclass overrides, not this global handler.
+    if (payload.type && /^[a-z]+:/.test(payload.type)) {
+      return;
+    }
 
     switch (payload.type) {
       case 'getControllers': {

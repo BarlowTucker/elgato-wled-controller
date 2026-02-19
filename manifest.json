@@ -27,5 +27,14 @@
   "Category": "WLED",
   "CategoryIcon": "imgs/category-icon",
   "PropertyInspectorPath": "ui/global-settings.html",
-  "Actions": []
+  "Actions": [
+    {
+      "Name": "Toggle Power",
+      "UUID": "com.barloworld.wled.toggle-power",
+      "Icon": "imgs/actions/toggle-power/icon",
+      "PropertyInspectorPath": "ui/toggle-power.html",
+      "Controllers": ["Keypad"],
+      "States": [{ "Image": "imgs/actions/toggle-power/key" }]
+    }
+  ]
 }
