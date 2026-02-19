@@ -87,6 +87,24 @@
       color: #ff6b6b;
       margin-top: 2px;
     }
+    .add-form {
+      margin-top: 4px;
+    }
+    .add-form input {
+      width: 100%;
+      box-sizing: border-box;
+      background: #1a1a1a;
+      color: #e8e8e8;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.9em;
+      margin-bottom: 4px;
+    }
+    .add-form input:focus {
+      outline: none;
+      border-color: rgba(255,255,255,0.4);
+    }
   </style>
 </head>
 
@@ -94,6 +112,14 @@
   <sdpi-item label="Target Controllers">
     <div id="controller-list">
       <div class="empty-message">Loading controllers...</div>
+    </div>
+  </sdpi-item>
+
+  <sdpi-item label="Add Controller">
+    <div class="add-form">
+      <input type="text" id="input-ip" placeholder="192.168.1.50 or hostname:port" />
+      <input type="text" id="input-name" placeholder="Display name (optional)" />
+      <sdpi-button id="btn-add">Add</sdpi-button>
     </div>
   </sdpi-item>
 
@@ -149,7 +175,7 @@
       if (!currentControllers.length) {
         container.innerHTML =
           '<div class="empty-message">No controllers registered.</div>' +
-          '<div class="empty-hint">Add controllers via the global WLED settings panel.</div>';
+          '<div class="empty-hint">Add a controller below by IP address.</div>';
         // Hide mode and preset sections
         document.getElementById('mode-section').style.display = 'none';
         document.getElementById('preset-section').style.display = 'none';
@@ -361,6 +387,23 @@
       modeToggle.addEventListener('change', () => {
         saveSettings();
         renderPresets();
+      });
+    });
+
+    // Add controller button handler
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btn-add').addEventListener('click', () => {
+        const ipEl = document.getElementById('input-ip');
+        const nameEl = document.getElementById('input-name');
+        const ip = (ipEl.value || '').trim();
+        const name = (nameEl.value || '').trim();
+        if (!ip) return;
+        if (window.$SD) {
+          // Non-namespaced — handled by the global onSendToPlugin handler
+          window.$SD.send('sendToPlugin', { type: 'addController', ip, name: name || undefined });
+        }
+        ipEl.value = '';
+        nameEl.value = '';
       });
     });
 
