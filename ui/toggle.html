@@ -5,13 +5,13 @@
   <title>WLED Toggle</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; color: #e8e8e8; background: transparent; padding: 8px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; color: #e8e8e8; background: transparent; padding: 8px; overflow-x: hidden; }
     .section-label { font-size: 11px; font-weight: 600; color: #969696; text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 6px 0; }
     .section-label:first-child { margin-top: 0; }
     .row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
     .row label { flex: 0 0 70px; font-size: 11px; color: #969696; }
     input[type="text"], select {
-      flex: 1; background: #2d2d2d; border: 1px solid #3d3d3d; border-radius: 3px;
+      flex: 1; min-width: 0; background: #2d2d2d; border: 1px solid #3d3d3d; border-radius: 3px;
       color: #e8e8e8; padding: 4px 6px; font-size: 12px; outline: none;
     }
     input[type="text"]:focus, select:focus { border-color: #0077ff; }
@@ -27,8 +27,8 @@
       display: flex; align-items: center; gap: 6px;
       background: #2d2d2d; border-radius: 3px; padding: 4px 8px;
     }
-    .controller-name { flex: 1; font-size: 12px; }
-    .controller-ip { font-size: 10px; color: #969696; }
+    .controller-name { flex: 1; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .controller-ip { font-size: 10px; color: #969696; white-space: nowrap; }
     .checkbox-list { display: flex; flex-direction: column; gap: 4px; }
     .checkbox-item { display: flex; align-items: center; gap: 6px; }
     .checkbox-item label { font-size: 12px; cursor: pointer; }
@@ -71,112 +71,91 @@
   <script src="sdpi-components.js"></script>
   <script>
   (function() {
-    console.log("[PI toggle] script loaded, streamDeck =", typeof streamDeck, streamDeck);
-    let controllers = [];
-    let settings = { selectedControllers: [], powerState: "on" };
-
-    // --- Render helpers ---
+    var controllers = [];
+    var actionSettings = { selectedControllers: [], powerState: "on" };
 
     function renderControllerList() {
-      const list = document.getElementById("controller-list");
+      var list = document.getElementById("controller-list");
       if (controllers.length === 0) {
         list.innerHTML = '<div class="no-controllers">No controllers added yet.</div>';
         return;
       }
-      list.innerHTML = controllers.map(c => `
-        <div class="controller-item">
-          <span class="controller-name">${escHtml(c.name)}</span>
-          <span class="controller-ip">${escHtml(c.ip)}</span>
-          <button class="danger" data-ip="${escHtml(c.ip)}">Remove</button>
-        </div>
-      `).join("");
-
-      list.querySelectorAll("button[data-ip]").forEach(btn => {
-        btn.addEventListener("click", () => removeController(btn.dataset.ip));
+      list.innerHTML = controllers.map(function(c) { return ''
+        + '<div class="controller-item">'
+        + '<span class="controller-name">' + escHtml(c.name) + '</span>'
+        + '<span class="controller-ip">' + escHtml(c.ip) + '</span>'
+        + '<button class="danger" data-ip="' + escHtml(c.ip) + '">Remove</button>'
+        + '</div>';
+      }).join("");
+      list.querySelectorAll("button[data-ip]").forEach(function(btn) {
+        btn.addEventListener("click", function() { removeController(btn.dataset.ip); });
       });
     }
 
     function renderCheckboxes() {
-      const list = document.getElementById("checkbox-list");
+      var list = document.getElementById("checkbox-list");
       if (controllers.length === 0) {
         list.innerHTML = '<div class="no-controllers">Add controllers above to select targets.</div>';
         return;
       }
-      list.innerHTML = controllers.map(c => `
-        <div class="checkbox-item">
-          <input type="checkbox" id="chk-${escHtml(c.ip)}" value="${escHtml(c.ip)}"
-            ${settings.selectedControllers.includes(c.ip) ? "checked" : ""} />
-          <label for="chk-${escHtml(c.ip)}">${escHtml(c.name)} (${escHtml(c.ip)})</label>
-        </div>
-      `).join("");
-
-      list.querySelectorAll("input[type=checkbox]").forEach(chk => {
+      list.innerHTML = controllers.map(function(c) { return ''
+        + '<div class="checkbox-item">'
+        + '<input type="checkbox" id="chk-' + escHtml(c.ip) + '" value="' + escHtml(c.ip) + '"'
+        + (actionSettings.selectedControllers.indexOf(c.ip) !== -1 ? ' checked' : '') + ' />'
+        + '<label for="chk-' + escHtml(c.ip) + '">' + escHtml(c.name) + ' (' + escHtml(c.ip) + ')</label>'
+        + '</div>';
+      }).join("");
+      list.querySelectorAll("input[type=checkbox]").forEach(function(chk) {
         chk.addEventListener("change", saveSettings);
       });
     }
 
-    function escHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+    function refreshUI() {
+      renderControllerList();
+      renderCheckboxes();
     }
 
-    // --- Save per-action settings ---
+    function escHtml(str) {
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
 
     async function saveSettings() {
-      const selectedControllers = Array.from(
+      var selectedControllers = Array.from(
         document.querySelectorAll("#checkbox-list input[type=checkbox]:checked")
-      ).map(chk => chk.value);
-      const powerState = document.getElementById("power-state").value;
-      settings = { selectedControllers, powerState };
-      await streamDeck.settings.setSettings(settings);
+      ).map(function(chk) { return chk.value; });
+      var powerState = document.getElementById("power-state").value;
+      actionSettings = { selectedControllers: selectedControllers, powerState: powerState };
+      await streamDeck.settings.setSettings(actionSettings);
     }
-
-    // --- Controller management (global settings — PI reads/writes directly) ---
 
     async function addController() {
       var ip = document.getElementById("ctrl-ip").value.trim();
       var name = document.getElementById("ctrl-name").value.trim();
-      console.log("[PI toggle] addController called, ip =", ip, "name =", name);
-      if (!ip || !name) { console.log("[PI toggle] addController: empty ip or name, aborting"); return; }
-      try {
-        console.log("[PI toggle] calling getGlobalSettings...");
-        var globals = await streamDeck.settings.getGlobalSettings();
-        console.log("[PI toggle] getGlobalSettings returned:", JSON.stringify(globals));
-        var list = globals.controllers || [];
-        if (!list.some(function(c) { return c.ip === ip; })) {
-          list = list.concat([{ ip: ip, name: name }]);
-          console.log("[PI toggle] calling setGlobalSettings with:", JSON.stringify({ controllers: list }));
-          await streamDeck.settings.setGlobalSettings({ controllers: list });
-          console.log("[PI toggle] setGlobalSettings completed");
-        } else {
-          console.log("[PI toggle] controller already exists, skipping");
-        }
-      } catch (err) {
-        console.error("[PI toggle] addController error:", err);
+      if (!ip || !name) return;
+      var globals = await streamDeck.settings.getGlobalSettings();
+      var list = (globals && globals.controllers) || [];
+      if (!list.some(function(c) { return c.ip === ip; })) {
+        list = list.concat([{ ip: ip, name: name }]);
+        await streamDeck.settings.setGlobalSettings({ controllers: list });
       }
+      controllers = list;
+      refreshUI();
       document.getElementById("ctrl-ip").value = "";
       document.getElementById("ctrl-name").value = "";
     }
 
     async function removeController(ip) {
       var globals = await streamDeck.settings.getGlobalSettings();
-      var list = (globals.controllers || []).filter(function(c) { return c.ip !== ip; });
+      var list = ((globals && globals.controllers) || []).filter(function(c) { return c.ip !== ip; });
       await streamDeck.settings.setGlobalSettings({ controllers: list });
+      controllers = list;
+      refreshUI();
     }
 
-    // --- Listen for global settings changes (fires when setGlobalSettings is called) ---
-
     streamDeck.settings.onDidReceiveGlobalSettings(function(ev) {
-      console.log("[PI toggle] onDidReceiveGlobalSettings fired:", JSON.stringify(ev));
       controllers = (ev.settings && ev.settings.controllers) || [];
-      renderControllerList();
-      renderCheckboxes();
+      refreshUI();
     });
-
-    // --- Wire up UI events ---
 
     document.getElementById("btn-add").addEventListener("click", addController);
     document.getElementById("ctrl-ip").addEventListener("keydown", function(e) {
@@ -185,25 +164,19 @@
     document.getElementById("ctrl-name").addEventListener("keydown", function(e) {
       if (e.key === "Enter") addController();
     });
-
     document.getElementById("power-state").addEventListener("change", saveSettings);
 
-    // --- Load initial settings from Stream Deck ---
-
     streamDeck.settings.getGlobalSettings().then(function(g) {
-      console.log("[PI toggle] initial getGlobalSettings:", JSON.stringify(g));
       controllers = (g && g.controllers) || [];
-      renderControllerList();
-      renderCheckboxes();
-    }).catch(function(err) { console.error("[PI toggle] initial getGlobalSettings error:", err); });
+      refreshUI();
+    }).catch(function() {});
 
     streamDeck.settings.getSettings().then(function(s) {
-      console.log("[PI toggle] initial getSettings:", JSON.stringify(s));
       if (s) {
-        settings = { selectedControllers: s.selectedControllers || [], powerState: s.powerState || "on" };
-        document.getElementById("power-state").value = settings.powerState;
+        actionSettings = { selectedControllers: s.selectedControllers || [], powerState: s.powerState || "on" };
+        document.getElementById("power-state").value = actionSettings.powerState;
       }
-    }).catch(function(err) { console.error("[PI toggle] initial getSettings error:", err); });
+    }).catch(function() {});
   })();
   </script>
 </body>
