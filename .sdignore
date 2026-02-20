@@ -1,0 +1,15 @@
+src/
+node_modules/
+.git/
+.gitignore
+.sdignore
+.planning/
+bin/
+tsconfig.json
+rollup.config.mjs
+package.json
+package-lock.json
+*.js.map
+*.ts
+README.md
+LICENSE

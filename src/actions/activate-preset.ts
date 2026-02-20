@@ -25,6 +25,7 @@ export class ActivatePresetAction extends SingletonAction<ActivatePresetSettings
 
       const payload = { ps: id, on: true };
       await sendToControllers(selectedControllers, payload);
+      await ev.action.showOk();
     } catch (err) {
       console.error("[activate-preset] onKeyDown error:", err);
       await ev.action.showAlert();

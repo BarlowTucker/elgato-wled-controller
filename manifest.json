@@ -1,20 +1,21 @@
 {
   "UUID": "com.barlowtucker.wled",
   "Name": "WLED Control",
-  "Version": "1.0.0",
+  "Version": "1.0.0.0",
   "Author": "Barlow Tucker",
   "Description": "Control WLED LED controllers from Stream Deck",
+  "URL": "https://github.com/BarlowTucker/elgato-wled-controller",
   "Category": "WLED",
   "CategoryIcon": "imgs/plugin/icon",
   "Icon": "imgs/plugin/icon",
   "CodePath": "dist/plugin.js",
   "Nodejs": { "Version": "20" },
-  "SDKVersion": 2,
+  "SDKVersion": 3,
   "OS": [
     { "Platform": "mac", "MinimumVersion": "10.15" },
     { "Platform": "windows", "MinimumVersion": "10" }
   ],
-  "Software": { "MinimumVersion": "6.5" },
+  "Software": { "MinimumVersion": "6.9" },
   "Actions": [
     {
       "Name": "Power",

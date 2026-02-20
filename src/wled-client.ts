@@ -1,7 +1,8 @@
 /**
  * WLED HTTP client — sends JSON state payloads to WLED controllers.
- * Uses AbortController for timeout (no built-in fetch timeout in Node 20).
  */
+
+const IP_PATTERN = /^(\d{1,3}\.){3}\d{1,3}$/;
 
 /**
  * Send a payload to a single WLED controller.
@@ -13,6 +14,11 @@ export async function sendToController(
   payload: Record<string, unknown>,
   timeoutMs = 3000
 ): Promise<boolean> {
+  if (!IP_PATTERN.test(ip)) {
+    console.error("[wled-client] Invalid IP address format");
+    return false;
+  }
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -24,9 +30,8 @@ export async function sendToController(
       signal: controller.signal,
     });
     return response.ok;
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error(`[wled-client] Failed to reach controller ${ip}: ${message}`);
+  } catch {
+    console.error("[wled-client] Failed to reach controller");
     return false;
   } finally {
     clearTimeout(timer);
@@ -36,7 +41,6 @@ export async function sendToController(
 /**
  * Send a payload to multiple WLED controllers in parallel.
  * Uses Promise.allSettled so one failure does not block others.
- * Logs each failure but never throws.
  */
 export async function sendToControllers(
   ips: string[],
@@ -48,13 +52,9 @@ export async function sendToControllers(
 
   results.forEach((result, index) => {
     if (result.status === "rejected") {
-      console.error(
-        `[wled-client] Unexpected rejection for controller ${ips[index]}: ${result.reason}`
-      );
+      console.error(`[wled-client] Controller ${index + 1} rejected`);
     } else if (result.value === false) {
-      console.error(
-        `[wled-client] Controller ${ips[index]} returned failure or timed out`
-      );
+      console.error(`[wled-client] Controller ${index + 1} failed or timed out`);
     }
   });
 }

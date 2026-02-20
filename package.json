@@ -1,8 +1,11 @@
 {
   "name": "com.barlowtucker.wled",
   "version": "1.0.0",
+  "description": "Control WLED LED controllers from Stream Deck",
+  "license": "MIT",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "pack": "rollup -c && streamdeck pack"
   },
   "dependencies": {
     "@elgato/streamdeck": "^1.0.0"
@@ -11,6 +14,7 @@
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.0.0",
     "rollup": "^4.0.0",
     "tslib": "^2.0.0",
