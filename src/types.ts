@@ -10,9 +10,9 @@ export interface GlobalSettings extends JsonObject {
   controllers: WledController[];
 }
 
-export interface ToggleSettings extends JsonObject {
+export interface PowerSettings extends JsonObject {
   selectedControllers: string[]; // array of IP addresses
-  powerState: "on" | "off";
+  powerState: "on" | "off" | "toggle";
 }
 
 export interface ActivatePresetSettings extends JsonObject {

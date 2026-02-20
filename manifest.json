@@ -17,11 +17,11 @@
   "Software": { "MinimumVersion": "6.5" },
   "Actions": [
     {
-      "Name": "Toggle",
+      "Name": "Power",
       "UUID": "com.barlowtucker.wled.toggle",
       "Icon": "imgs/actions/toggle/icon",
       "PropertyInspectorPath": "ui/toggle.html",
-      "Tooltip": "Turn WLED controllers on or off",
+      "Tooltip": "Turn WLED controllers on, off, or toggle",
       "Controllers": ["Keypad"],
       "States": [{ "Image": "imgs/actions/toggle/key" }]
     },
