@@ -8,7 +8,7 @@
   "CategoryIcon": "imgs/plugin/icon",
   "Icon": "imgs/plugin/icon",
   "CodePath": "dist/plugin.js",
-  "Nodes": { "Min": "20.0.0" },
+  "Nodejs": { "Version": "20" },
   "SDKVersion": 2,
   "OS": [
     { "Platform": "mac", "MinimumVersion": "10.15" },

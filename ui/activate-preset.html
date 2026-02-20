@@ -182,6 +182,7 @@
         if (actionSettings.presetId) {
           document.getElementById("preset-id").value = actionSettings.presetId;
         }
+        refreshUI();
       }
     }).catch(function() {});
   })();

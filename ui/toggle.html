@@ -175,6 +175,7 @@
       if (s) {
         actionSettings = { selectedControllers: s.selectedControllers || [], powerState: s.powerState || "on" };
         document.getElementById("power-state").value = actionSettings.powerState;
+        refreshUI();
       }
     }).catch(function() {});
   })();

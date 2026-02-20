@@ -7,7 +7,7 @@ export default {
   input: "src/plugin.ts",
   output: {
     file: "dist/plugin.js",
-    format: "es",
+    format: "cjs",
     sourcemap: true
   },
   plugins: [
