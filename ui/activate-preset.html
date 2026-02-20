@@ -35,27 +35,39 @@
     .no-controllers { font-size: 11px; color: #666; font-style: italic; }
     .hint { font-size: 10px; color: #666; margin-top: 2px; }
     hr { border: none; border-top: 1px solid #333; margin: 10px 0; }
+    .manage-btn {
+      display: flex; align-items: center; justify-content: space-between; width: 100%;
+      background: #2d2d2d; border: 1px solid #3d3d3d; color: #e8e8e8; border-radius: 3px;
+      padding: 6px 10px; font-size: 12px; cursor: pointer; margin-bottom: 8px;
+    }
+    .manage-btn:hover { background: #363636; border-color: #4d4d4d; }
+    .manage-btn .arrow { font-size: 10px; color: #969696; }
+    .manage-panel { display: none; border: 1px solid #3d3d3d; border-radius: 3px; padding: 8px; margin-bottom: 8px; background: #1e1e1e; }
+    .manage-panel.open { display: block; }
   </style>
 </head>
 <body>
 
-  <!-- Controller Management -->
-  <div class="section-label">Controllers</div>
-  <div class="row">
-    <input type="text" id="ctrl-ip" placeholder="IP address" />
-    <input type="text" id="ctrl-name" placeholder="Name" style="flex: 0.7" />
-    <button id="btn-add">Add</button>
+  <!-- Controller Management Toggle -->
+  <button class="manage-btn" id="manage-toggle">
+    <span>Manage Controllers</span>
+    <span class="arrow" id="manage-arrow">&#9660;</span>
+  </button>
+  <div class="manage-panel" id="manage-panel">
+    <div class="row">
+      <input type="text" id="ctrl-ip" placeholder="IP address" />
+      <input type="text" id="ctrl-name" placeholder="Name" style="flex: 0.7" />
+      <button id="btn-add">Add</button>
+    </div>
+    <div class="controller-list" id="controller-list">
+      <div class="no-controllers">No controllers added yet.</div>
+    </div>
   </div>
-  <div class="controller-list" id="controller-list">
-    <div class="no-controllers">No controllers added yet.</div>
-  </div>
-
-  <hr />
 
   <!-- Target Selection -->
   <div class="section-label">Target Controllers</div>
   <div class="checkbox-list" id="checkbox-list">
-    <div class="no-controllers">Add controllers above to select targets.</div>
+    <div class="no-controllers">No controllers — click Manage Controllers to add.</div>
   </div>
 
   <hr />
@@ -95,7 +107,7 @@
     function renderCheckboxes() {
       var list = document.getElementById("checkbox-list");
       if (controllers.length === 0) {
-        list.innerHTML = '<div class="no-controllers">Add controllers above to select targets.</div>';
+        list.innerHTML = '<div class="no-controllers">No controllers — click Manage Controllers to add.</div>';
         return;
       }
       list.innerHTML = controllers.map(function(c) { return ''
@@ -156,6 +168,14 @@
     streamDeck.settings.onDidReceiveGlobalSettings(function(ev) {
       controllers = (ev.settings && ev.settings.controllers) || [];
       refreshUI();
+    });
+
+    // Collapsible panel toggle
+    var managePanel = document.getElementById("manage-panel");
+    var manageArrow = document.getElementById("manage-arrow");
+    document.getElementById("manage-toggle").addEventListener("click", function() {
+      var isOpen = managePanel.classList.toggle("open");
+      manageArrow.innerHTML = isOpen ? "&#9650;" : "&#9660;";
     });
 
     document.getElementById("btn-add").addEventListener("click", addController);
