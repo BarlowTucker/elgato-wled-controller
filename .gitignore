@@ -3,3 +3,4 @@ dist/
 .planning/
 bin/
 *.js.map
+logs
